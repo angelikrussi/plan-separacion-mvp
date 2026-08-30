@@ -3,7 +3,7 @@
 
 Visión, épicas, historias de usuario, reglas de negocio y modelo de datos para el MVP, validados como Product Owner a partir del documento base.
 
-**Versión 1.1 · 30 de agosto de 2026 · Estado: MVP · 9 épicas · 18 historias de usuario**
+**Versión 1.2 · 30 de agosto de 2026 · Estado: MVP · 9 épicas · 18 historias de usuario**
 
 ---
 
@@ -36,7 +36,7 @@ El documento base definía dos veces la misma funcionalidad: **E07 — Administr
 
 ### 2.3 Vacíos adicionales identificados
 
-Se detectaron 10 vacíos que no son decisiones de PO urgentes pero sí deben resolverse antes de construir. Quedan documentados con una recomendación en la [sección 9](#9-decisiones-pendientes-y-supuestos).
+Se detectaron 13 vacíos que no son decisiones de PO urgentes pero sí deben resolverse antes de construir. Quedan documentados con una recomendación en la [sección 9](#9-decisiones-pendientes-y-supuestos).
 
 ---
 
@@ -405,6 +405,15 @@ Vacío: no se define si los registros de auditoría pueden editarse o eliminarse
 
 **Autenticación del administrador.**
 Vacío: con la decisión de exigir 2FA a los clientes, el administrador —que aprueba movimientos de dinero— hoy solo requiere usuario y contraseña. Recomendación: evaluar extender el 2FA también al login del administrador, dado que su rol tiene mayor impacto financiero por acción.
+
+**Modelo legal y regulatorio del negocio.**
+Vacío: no se ha definido si Principal opera como plan separe, crédito/financiación o ahorro; cada modelo tiene implicaciones distintas en protección al consumidor, tratamiento de datos y posible regulación financiera en Colombia. Recomendación: resolver con asesoría jurídica y contable antes de cerrar el modelo de datos y las reglas de negocio definitivas, ya que la clasificación legal puede impactar reglas como RB-05 y RB-09.
+
+**Roles administrativos granulares.**
+Vacío: el documento base distingue administrador de pagos, de clientes, de inventario, de entregas y general; este documento técnico consolidó todo en un único rol `administrador`. Recomendación: para el MVP, un solo rol es suficiente, pero definir permisos por rol (RBAC) antes de incorporar más de un administrador operando la plataforma simultáneamente.
+
+**Ajuste manual de saldo con auditoría.**
+Vacío: no existe una historia de usuario para que un administrador ajuste manualmente el saldo de un plan (por ejemplo, ante un pago confirmado por fuera del flujo normal de comprobantes). Recomendación: agregar una HU de "Ajustar saldo manualmente" que exija motivo y registre valor anterior, valor nuevo, administrador responsable y fecha/hora en la auditoría (HU-015), antes de habilitar esta operación en producción.
 
 ---
 

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import { verifyPassword } from "@/lib/auth/password";
-import { crearLoginToken } from "@/lib/auth/session";
+import { crearLoginToken, crearSesion } from "@/lib/auth/session";
 import { generarSecretoTotp, totpUri } from "@/lib/auth/totp";
 import { authenticator } from "otplib";
 import { ApiError, errorResponse } from "@/lib/errors";
@@ -18,6 +18,13 @@ export async function POST(request: Request) {
 
     if (!cliente || !passwordValida) {
       throw new ApiError(401, "INVALID_CREDENTIALS", "Correo o contraseña incorrectos");
+    }
+
+    // Desactivación temporal de 2FA para navegar el resto de vistas sin fricción.
+    // Ver ADR-002 / BR-010 — revertir (borrar este bloque) antes de cualquier despliegue real.
+    if (process.env.SKIP_2FA === "true") {
+      await crearSesion({ sub: cliente.id, rol: "cliente" });
+      return Response.json({ requiereTotp: false, session: { rol: "cliente" } });
     }
 
     await crearLoginToken(cliente.id);

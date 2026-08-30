@@ -30,6 +30,10 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error?.message ?? "No se pudo iniciar sesión");
+      if (!data.requiereTotp) {
+        router.push("/dashboard");
+        return;
+      }
       if (data.configurarTotp) {
         setTotpUri(data.totpUri);
         setQrDataUrl(await QRCode.toDataURL(data.totpUri));

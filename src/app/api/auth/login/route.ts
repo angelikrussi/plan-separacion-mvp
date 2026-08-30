@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { verifyPassword } from "@/lib/auth/password";
 import { crearLoginToken } from "@/lib/auth/session";
 import { generarSecretoTotp, totpUri } from "@/lib/auth/totp";
+import { authenticator } from "otplib";
 import { ApiError, errorResponse } from "@/lib/errors";
 
 // TASK-004 — FR-002, paso 1: valida credenciales, emite loginToken.
@@ -28,6 +29,8 @@ export async function POST(request: Request) {
         requiereTotp: true,
         configurarTotp: true,
         totpUri: totpUri(cliente.correo, secret),
+        // Solo en desarrollo: evita depender de una app autenticadora para probar el flujo localmente.
+        codigoDev: process.env.NODE_ENV !== "production" ? authenticator.generate(secret) : undefined,
       });
     }
 

@@ -14,6 +14,7 @@ export default function LoginPage() {
   const [codigo, setCodigo] = useState("");
   const [totpUri, setTotpUri] = useState<string | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  const [codigoDev, setCodigoDev] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [cargando, setCargando] = useState(false);
 
@@ -32,6 +33,8 @@ export default function LoginPage() {
       if (data.configurarTotp) {
         setTotpUri(data.totpUri);
         setQrDataUrl(await QRCode.toDataURL(data.totpUri));
+        setCodigoDev(data.codigoDev ?? null);
+        if (data.codigoDev) setCodigo(data.codigoDev);
       }
       setPaso("totp");
     } catch (e) {
@@ -108,6 +111,12 @@ export default function LoginPage() {
                 <summary className="cursor-pointer text-xs text-brand">¿No puedes escanear? Ver clave manual</summary>
                 <code className="text-xs break-all">{totpUri}</code>
               </details>
+              {codigoDev && (
+                <div className="self-start w-full rounded bg-warning/10 border border-warning/40 px-3 py-2">
+                  <p className="text-xs text-warning font-medium">Solo en desarrollo — código ya autocompletado:</p>
+                  <p className="text-lg font-mono tracking-widest">{codigoDev}</p>
+                </div>
+              )}
             </div>
           )}
           <input

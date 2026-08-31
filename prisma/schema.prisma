@@ -1,0 +1,126 @@
+// Ver specs/technical/TS-001-principal-mvp.md (Data Model) y ADR-004
+// (SQLite en dev / PostgreSQL en prod). Los campos de estado se
+// modelan como String porque SQLite no soporta enums nativos; los
+// valores válidos se validan en la capa de aplicación (src/lib).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id                 String   @id @default(cuid())
+  nombreCompleto     String
+  documentoIdentidad String
+  celular            String
+  correo             String   @unique
+  passwordHash       String
+  totpSecret         String?
+  totpHabilitado     Boolean  @default(false)
+  fechaRegistro      DateTime @default(now())
+
+  planes Plan[]
+}
+
+model Administrador {
+  id           String @id @default(cuid())
+  usuario      String @unique
+  passwordHash String
+  rol          String @default("administrador")
+
+  abonosResueltos Abono[]
+}
+
+model Producto {
+  id                 String  @id @default(cuid())
+  nombre             String
+  descripcion        String
+  precio             Int
+  categoria          String
+  fotos              String // JSON string array
+  stockLimitado      Boolean @default(false)
+  cantidadDisponible Int?
+  opcionesPlan       String // JSON: number[] (cuotas disponibles)
+  condiciones        String  @default("")
+
+  planes Plan[]
+}
+
+/// estado: ACTIVO | COMPLETAMENTE_PAGADO | PENDIENTE_DE_ENTREGA | ENTREGADO | CANCELADO
+model Plan {
+  id                 String   @id @default(cuid())
+  clienteId          String
+  productoId         String
+  valorTotal         Int
+  numeroCuotas       Int
+  estado             String   @default("ACTIVO")
+  totalPagado        Int      @default(0)
+  saldoPendiente     Int
+  fechaCreacion      DateTime @default(now())
+  motivoCancelacion  String?
+
+  cliente  Cliente   @relation(fields: [clienteId], references: [id])
+  producto Producto  @relation(fields: [productoId], references: [id])
+  abonos   Abono[]
+  entrega  Entrega?
+
+  @@index([clienteId])
+  @@index([estado])
+}
+
+/// estado: PENDIENTE | EN_REVISION | APROBADO | RECHAZADO
+model Abono {
+  id                String    @id @default(cuid())
+  planId            String
+  valor             Int
+  metodoPago        String
+  fecha             DateTime
+  referencia        String?
+  comprobanteUrl    String
+  estado            String    @default("PENDIENTE")
+  motivoRechazo     String?
+  administradorId   String?
+  fechaResolucion   DateTime?
+  revisadoPor       String?
+  revisadoEn        DateTime?
+
+  plan          Plan           @relation(fields: [planId], references: [id])
+  administrador Administrador? @relation(fields: [administradorId], references: [id])
+
+  @@index([planId])
+  @@index([estado])
+}
+
+/// estadoEntrega: PENDIENTE_DE_PREPARACION | PREPARADO | DESPACHADO | ENTREGADO
+model Entrega {
+  id               String   @id @default(cuid())
+  planId           String   @unique
+  tipo             String
+  nombreReceptor   String?
+  telefono         String?
+  ciudad           String?
+  direccion        String?
+  barrio           String?
+  puntoReferencia  String?
+  fechaPreferida   String?
+  estadoEntrega    String   @default("PENDIENTE_DE_PREPARACION")
+
+  plan Plan @relation(fields: [planId], references: [id])
+}
+
+model Auditoria {
+  id                 String   @id @default(cuid())
+  entidad            String
+  entidadId          String
+  accion             String
+  actor              String
+  fechaHora          DateTime @default(now())
+  valoresAnteriores  String // JSON
+  valoresNuevos      String // JSON
+
+  @@index([entidadId])
+}

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { AppShell } from "@/components/AppShell";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export const dynamic = "force-dynamic";
 
@@ -7,10 +7,10 @@ export default async function AuditoriaPage() {
   const registros = await prisma.auditoria.findMany({ orderBy: { fechaHora: "desc" }, take: 100 });
 
   return (
-    <AppShell title="Auditoría" back="/admin/pagos">
-      <main className="flex flex-col gap-2 p-4 text-xs">
+    <AdminShell title="Auditoría">
+      <div className="flex flex-col gap-2 text-xs max-w-3xl">
         {registros.map((r) => (
-          <div key={r.id} className="rounded border p-3">
+          <div key={r.id} className="rounded border bg-white p-3">
             <div className="flex justify-between font-medium">
               <span>{r.accion}</span>
               <span className="text-gray-400">{new Date(r.fechaHora).toLocaleString("es-CO")}</span>
@@ -31,7 +31,7 @@ export default async function AuditoriaPage() {
           </div>
         ))}
         {registros.length === 0 && <p className="text-gray-400">Sin registros todavía.</p>}
-      </main>
-    </AppShell>
+      </div>
+    </AdminShell>
   );
 }

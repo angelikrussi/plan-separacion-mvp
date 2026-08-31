@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error?.message ?? "No se pudo iniciar sesión");
-      router.push("/admin/pagos");
+      router.push("/admin");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Error inesperado");
     } finally {

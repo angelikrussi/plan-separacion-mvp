@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { AppShell } from "@/components/AppShell";
-import { LogoutButton } from "@/components/LogoutButton";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export const dynamic = "force-dynamic";
 
@@ -13,15 +12,10 @@ export default async function AdminPagosPage() {
   });
 
   return (
-    <AppShell title="Pagos por verificar">
-      <main className="flex flex-col gap-3 p-4">
-        <div className="flex justify-between text-sm">
-          <Link href="/admin/entregas" className="text-brand">Entregas pendientes →</Link>
-          <Link href="/admin/auditoria" className="text-brand">Ver auditoría →</Link>
-        </div>
-
+    <AdminShell title="Pagos por verificar">
+      <div className="flex flex-col gap-3 max-w-2xl">
         {abonos.map((a) => (
-          <Link key={a.id} href={`/admin/pagos/${a.id}`} className="rounded-lg border p-4 flex flex-col gap-1">
+          <Link key={a.id} href={`/admin/pagos/${a.id}`} className="rounded-lg border bg-white p-4 flex flex-col gap-1">
             <div className="flex justify-between">
               <span className="font-medium">{a.plan.cliente.nombreCompleto}</span>
               <span className="text-xs rounded-full bg-gray-100 px-2 py-1">{a.estado}</span>
@@ -34,9 +28,7 @@ export default async function AdminPagosPage() {
           </Link>
         ))}
         {abonos.length === 0 && <p className="text-gray-500 text-sm">No hay pagos pendientes por revisar.</p>}
-
-        <LogoutButton redirectTo="/admin/login" />
-      </main>
-    </AppShell>
+      </div>
+    </AdminShell>
   );
 }

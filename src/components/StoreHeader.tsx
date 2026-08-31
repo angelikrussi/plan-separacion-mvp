@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AccountMenu } from "@/components/AccountMenu";
 
 const CATEGORIAS = [
   "Celulares",
@@ -18,8 +19,7 @@ export function StoreHeader({ categoriaActiva }: { categoriaActiva?: string }) {
         </Link>
         <p className="hidden sm:block text-sm text-brand-light/90">Tu forma de comprar, separar y pagar.</p>
         <nav className="flex items-center gap-4 text-sm">
-          <Link href="/dashboard" className="hover:underline">Mis planes</Link>
-          <Link href="/login" className="hover:underline">Ingresar</Link>
+          <AccountMenu />
         </nav>
       </div>
       <div className="bg-brand-dark">

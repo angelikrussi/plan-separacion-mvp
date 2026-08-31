@@ -1,8 +1,10 @@
-# FS-001 — Principal: plataforma de plan separe (MVP)
+# FS-001 — LuckyHouse: plataforma de plan separe (MVP)
+
+> **v1.1 (2026-08-31)** — agrega E10 (panel gerencial del administrador: KPIs, rankings, exportación a Excel), ajusta Non-Goals (WhatsApp) y referencias de sección tras la reorganización de `specs/`. v1.0 cubría E01-E09 (registro hasta entrega).
 
 ## Context
 
-Principal es una plataforma web mobile-first de plan separe: un cliente aparta un producto y lo paga mediante abonos progresivos hasta completar el valor total, momento en el que el producto se libera y se gestiona su entrega. Este documento formaliza, con IDs estables, el comportamiento ya validado con el PO en `Principal_Documento_Tecnico.md` (raíz del repo, documento de contexto).
+LuckyHouse (nombre comercial del producto "Principal") es una plataforma web mobile-first de plan separe: un cliente aparta un producto y lo paga mediante abonos progresivos hasta completar el valor total, momento en el que el producto se libera y se gestiona su entrega. Este documento formaliza, con IDs estables, el comportamiento ya validado con el PO en `Principal_Documento_Tecnico.md` (raíz del repo, documento de contexto). El nombre comercial y la paleta de marca (verde profundo/verde oliva) se definieron directamente con el usuario durante la implementación — ver TS-001 sección de branding.
 
 ## Problem
 
@@ -25,14 +27,15 @@ Permitir que un cliente descubra un producto, simule un plan, lo cree, abone has
 - Historial de movimientos del cliente y auditoría interna.
 - Liberación automática del producto al llegar a saldo $0.
 - Registro de datos de entrega (recogida o envío).
+- Panel gerencial del administrador: indicadores clave, rankings (productos/categorías/clientes) y exportación de reporte a Excel.
 
 ### Out of Scope (MVP)
 - 2FA para administradores.
 - Roles administrativos granulares (solo existe un rol `administrador`).
 - Integración con pasarela de pagos automática.
-- Integración con WhatsApp.
+- Integración **funcional/automatizada** con WhatsApp (bot, notificaciones, cotizador). *Aclaración: sí existe un botón flotante de contacto que abre WhatsApp Web/app con un mensaje prellenado — es un enlace estático de marketing, no está conectado a ninguna lógica de negocio del sistema.*
 - Metas de ahorro (sin producto asociado).
-- Política de mora / vencimiento de plan.
+- Política de mora / vencimiento de plan formal (ver FR-023: el reporte incluye un indicador heurístico, no una política validada).
 - Confirmación de recepción por parte del cliente (solo el admin marca `ENTREGADO`).
 
 ## Actors
@@ -127,6 +130,21 @@ El sistema debe permitir a un cliente con plan `PENDIENTE_DE_ENTREGA` elegir rec
 
 #### FR-020 — Marcar entrega completada
 El sistema debe permitir a un administrador marcar una entrega como `ENTREGADO`.
+
+### E10 — Panel gerencial (admin)
+
+*El dueño de la tienda necesita una vista de conjunto del negocio, no solo cola de tareas operativas.*
+
+#### FR-021 — Consultar indicadores clave
+El sistema debe mostrar a un administrador, en un solo lugar: planes activos, planes próximos a entregar, planes en proceso de entrega, planes entregados, planes cancelados, pagos aprobados, pagos rechazados, pagos por revisar, recaudo total (suma de abonos aprobados) y cartera pendiente (suma de saldo de planes activos).
+
+#### FR-022 — Consultar rankings
+El sistema debe mostrar al administrador el top 10 de productos más solicitados, el top 10 de categorías más solicitadas y el top 10 de clientes por número de planes.
+
+#### FR-023 — Exportar reporte de planes
+El sistema debe permitir a un administrador descargar un archivo Excel con el detalle de todos los planes: identificador, fecha de creación, cliente, correo, producto, valor total, total pagado, saldo pendiente, estado, fecha del último abono aprobado, días sin abonar, y un indicador informativo de alerta.
+
+> **Nota:** el indicador de alerta (columna "Alerta" del reporte) es un heurístico de referencia (30+ días sin abono en un plan `ACTIVO`), **no** una política de mora validada con el negocio — ver vacío "Plazo del plan y mora" en `Principal_Documento_Tecnico.md` sección 9.
 
 ---
 
@@ -261,6 +279,16 @@ Given un plan con saldo $150.000,
 When un administrador ajusta manualmente el saldo a $120.000 indicando un motivo,
 Then se registra en auditoría el valor anterior ($150.000), el nuevo ($120.000), el administrador, el motivo y la fecha/hora.
 
+### AC-012 (FR-021)
+Given que existen planes y abonos en distintos estados,
+When un administrador abre el dashboard,
+Then cada indicador refleja el conteo real de la base de datos en ese momento (sin caché obsoleto).
+
+### AC-013 (FR-023)
+Given que existe al menos un plan,
+When un administrador descarga el reporte,
+Then el archivo Excel contiene una fila por plan con las columnas definidas en FR-023, incluyendo la aclaración de que "Alerta" es informativa.
+
 ---
 
 ## Non-Goals
@@ -269,7 +297,11 @@ Then se registra en auditoría el valor anterior ($150.000), el nuevo ($120.000)
 - No se implementa confirmación de recepción por el cliente.
 - No se implementa 2FA para administradores.
 - No se implementan roles administrativos granulares.
+- No se implementa integración funcional con WhatsApp (solo enlace de contacto estático — ver Scope).
+- El indicador de "alerta" del reporte (FR-023) no es una política de mora formal.
 
 ## Open Questions
 
 Ver `Principal_Documento_Tecnico.md` (raíz), sección 9 — 13 vacíos identificados. Los que requieren decisión técnica quedan resueltos en `TS-001` (ver sección "Decisiones derivadas de vacíos funcionales").
+
+Adicional: durante la implementación se activó temporalmente un bypass de 2FA (`SKIP_2FA`) y un autocompletado del código TOTP en desarrollo, para agilizar la revisión del resto de las vistas por parte del usuario. Esto es una **desviación temporal de BR-010**, documentada en ADR-005, y debe revertirse antes de cualquier despliegue real.

@@ -1,8 +1,27 @@
-# TS-001 — Principal: arquitectura técnica del MVP
+# TS-001 — Principal (LuckyHouse): arquitectura técnica del MVP
+
+> **v1.1 (2026-08-31)** — documenta lo realmente implementado tras TASK-001..028: sesión propia con `jose` (no NextAuth, ver ADR-008), módulo de reportes/dashboard gerencial, imagen placeholder local (ADR-007), y las desviaciones temporales de desarrollo (ADR-005, ADR-006). v1.0 era el diseño previo a implementar.
 
 ## References
 - FS-001
-- ADR-001, ADR-002, ADR-003, ADR-004
+- ADR-001 a ADR-008
+
+## Stack (implementado)
+
+| Capa | Librería | Versión |
+|---|---|---|
+| Framework | next | 14.2.35 |
+| Lenguaje | typescript | 5.5.4 |
+| Estilos | tailwindcss | 3.4.10 |
+| ORM | @prisma/client / prisma | 5.19.1 |
+| Hash de contraseñas | bcryptjs | 2.4.3 |
+| Sesión (JWT firmado) | jose | 5.9.6 |
+| 2FA (TOTP) | otplib | 12.0.1 |
+| QR de configuración 2FA | qrcode | 1.5.4 |
+| Gráficas del dashboard | recharts | 2.12.7 |
+| Exportación a Excel | xlsx (SheetJS) | 0.18.5 |
+
+`xlsx@0.18.5` tiene advisories conocidos (prototype pollution / ReDoS) sin parche en npm — ver Risks. Uso limitado a un endpoint admin-only, no procesa archivos subidos por terceros.
 
 ## Architecture Context
 
@@ -13,10 +32,10 @@ Browser (mobile-first)
       │ HTTPS
       ▼
 Next.js App Router
- ├─ (public)  /            /catalogo  /producto/[id]  /simulador
- ├─ (cliente) /dashboard   /planes/[id]  /perfil
- ├─ (admin)   /admin/pagos  /admin/planes  /admin/auditoria
- └─ /api/**  (Route Handlers — lógica de negocio)
+ ├─ storefront (StoreHeader, ancho completo)   /  /catalogo  /producto/[id]
+ ├─ cliente (AppShell, angosto tipo app)       /login  /registro  /dashboard  /planes/[id]  /perfil
+ ├─ admin (AdminShell, ancho, nav persistente) /admin  /admin/pagos  /admin/entregas  /admin/auditoria
+ └─ /api/**  (Route Handlers — lógica de negocio, incluye /api/admin/reportes)
       │
       ▼
 Application layer (use cases)
@@ -50,9 +69,9 @@ Database
 ## Components
 
 ### AuthModule
-Responsabilidad: registro, login con 2FA, sesión (NextAuth Credentials + TOTP), hash de contraseñas.
+Responsabilidad: registro, login en dos pasos (password → TOTP), sesión propia vía cookie JWT firmada (`jose`, no NextAuth — ver ADR-008), hash de contraseñas.
 Dependencias: ClienteRepository, TotpService.
-Constraints: nunca persiste contraseña en texto plano; nunca expone cuál credencial falló.
+Constraints: nunca persiste contraseña en texto plano; nunca expone cuál credencial falló; el bypass `SKIP_2FA` (ADR-005) es exclusivo de desarrollo.
 
 ### CatalogoModule
 Responsabilidad: listar productos, detalle, disponibilidad.
@@ -81,6 +100,11 @@ Dependencias: EntregaRepository, PlanRepository.
 ### AuditoriaService
 Responsabilidad: insertar registros append-only para toda acción sensible.
 Constraints: sin update/delete expuestos.
+
+### ReportesModule
+Responsabilidad: agregar KPIs (planes por estado, pagos por estado, recaudo, cartera pendiente), calcular rankings (top 10 productos/categorías/clientes) y generar el archivo Excel de planes.
+Dependencias: PlanRepository, AbonoRepository, ClienteRepository, ProductoRepository.
+Constraints: solo lectura (no muta estado); el indicador "alerta" del export es un heurístico, no una regla de negocio validada (FR-023).
 
 ## Data Model
 
@@ -188,6 +212,14 @@ POST /api/planes/{id}/entrega
 POST /api/admin/entregas/{id}/entregar  Auth: admin → 200 Entrega (ENTREGADO)
 ```
 
+### Reportes (admin)
+```text
+GET /api/admin/reportes/planes
+  Auth: admin
+  Response: 200, archivo .xlsx (Content-Disposition: attachment)
+  Errors: 401 UNAUTHORIZED
+```
+
 Formato de error estándar:
 ```json
 { "error": { "code": "OVERPAYMENT", "message": "..." } }
@@ -241,6 +273,12 @@ No aplica edición vía API pública repetible en el MVP (sin webhooks externos)
 
 - Storage de comprobantes: adapter con implementación filesystem local en dev.
 - Notificaciones: adapter de log en MVP (interfaz lista para email transaccional).
+- Imágenes de producto: `PlaceholderImage` (SVG inline, sin red externa) mientras `Producto.fotos` está vacío — reemplaza un intento inicial con `picsum.photos` descartado por no ser confiable sin conexión estable (ADR-007).
+- WhatsApp: botón flotante estático (`wa.me/<numero>?text=...`), sin backend ni automatización — ver Non-Goal en FS-001.
+
+## Branding
+
+Nombre comercial: **LuckyHouse**. Paleta definida con el usuario (2026-08-30): primary `#0F5843`, cta `#16865F`/`#0F6D4D` hover, accent `#A8D76E` (solo badges, nunca botones), success `#208A5A`, warning `#D99A22`, danger `#C94343`, info `#3478A8`. Tokens declarados en `tailwind.config.ts`.
 
 ## Error Handling
 
@@ -272,7 +310,17 @@ Sin objetivos de carga formales en MVP (bajo volumen inicial). No se hacen N+1 q
 
 ## Configuration
 
-Variables de entorno: `DATABASE_URL`, `NEXTAUTH_SECRET`, `TOTP_ISSUER`, `UPLOAD_DIR`.
+Variables de entorno: `DATABASE_URL`, `SESSION_SECRET`, `TOTP_ISSUER`, `UPLOAD_DIR`, `SKIP_2FA` (opcional, solo dev — ver ADR-005).
+
+## Desviaciones temporales de desarrollo
+
+No forman parte del diseño objetivo; existen para agilizar pruebas manuales en esta iteración y deben revertirse antes de producción.
+
+| Desviación | ADR | Revertir |
+|---|---|---|
+| `SKIP_2FA=true` salta el paso TOTP en login de cliente | ADR-005 | Quitar la variable del `.env` |
+| Sesión dura 30 días en dev (vs. 2h en prod) | ADR-006 | Ya condicionado por `NODE_ENV`; no requiere acción manual al desplegar |
+| Código TOTP autocompletado en pantalla de login (`codigoDev`) | ADR-005 | Ya condicionado por `NODE_ENV`; no requiere acción manual al desplegar |
 
 ## Migration
 
@@ -294,6 +342,9 @@ Un solo entorno (dev local) para el MVP de esta iteración; sin estrategia de de
 ## Risks
 - SQLite en dev vs PostgreSQL en prod puede ocultar diferencias de tipos/constraints (mitigado en ADR-004).
 - Sin 2FA de admin: el rol con mayor impacto financiero queda con un solo factor (Non-Goal aceptado explícitamente en FS-001).
+- `next@14.2.x` tiene advisories sin parche dentro de la línea 14 (requieren saltar a Next 16, cambio mayor no aplicado en este MVP); riesgo aceptado para un entorno de solo desarrollo local.
+- `xlsx@0.18.5` tiene advisories conocidos sin parche disponible en npm; exposición acotada a un endpoint admin-only.
+- `SKIP_2FA` mal configurado en un entorno real anularía BR-010 — mitigado por estar atado a una variable de entorno explícita y no al valor por defecto.
 
 ## Alternatives Considered
 

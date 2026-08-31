@@ -1,11 +1,5 @@
 import type { Producto } from "@prisma/client";
 
-// Placeholder determinístico mientras no hay fotografías reales cargadas
-// (fotos[] queda vacío en el seed) — mismo producto siempre muestra la misma imagen.
-export function placeholderImageUrl(seed: string, size = 600) {
-  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/${size}/${size}`;
-}
-
 export function productoPublico(p: Producto) {
   const disponible = p.stockLimitado ? (p.cantidadDisponible ?? 0) > 0 : true;
   return {

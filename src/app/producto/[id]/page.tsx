@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
-import { productoPublico, placeholderImageUrl } from "@/lib/productos";
+import { productoPublico } from "@/lib/productos";
 import { StoreHeader } from "@/components/StoreHeader";
+import { PlaceholderImage } from "@/components/PlaceholderImage";
 import { SimuladorYPlan } from "./SimuladorYPlan";
 
 export const dynamic = "force-dynamic";
@@ -15,9 +16,8 @@ export default async function ProductoPage({ params }: { params: { id: string } 
     <>
       <StoreHeader categoriaActiva={p.categoria} />
       <main className="mx-auto max-w-7xl px-4 py-6 grid md:grid-cols-2 gap-8">
-        <div className="rounded-xl bg-brand-light aspect-square overflow-hidden">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={placeholderImageUrl(p.id, 900)} alt={p.nombre} className="w-full h-full object-cover" />
+        <div className="rounded-xl aspect-square overflow-hidden">
+          <PlaceholderImage />
         </div>
 
         <div className="flex flex-col gap-4">

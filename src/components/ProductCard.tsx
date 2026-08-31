@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { placeholderImageUrl } from "@/lib/productos";
+import { PlaceholderImage } from "@/components/PlaceholderImage";
 
 type ProductoPublico = {
   id: string;
@@ -15,14 +15,8 @@ export function ProductCard({ producto: p }: { producto: ProductoPublico }) {
       href={`/producto/${p.id}`}
       className="group rounded-lg border bg-white overflow-hidden hover:shadow-md transition-shadow flex flex-col"
     >
-      <div className="aspect-square bg-brand-light">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={placeholderImageUrl(p.id)}
-          alt={p.nombre}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
+      <div className="aspect-square">
+        <PlaceholderImage />
       </div>
       <div className="p-3 flex flex-col gap-1">
         <span className="text-xs text-gray-400">{p.categoria}</span>

@@ -14,11 +14,16 @@ export type SessionPayload = {
   rol: "cliente" | "administrador";
 };
 
+// Duración de sesión: 2h en producción (TS-001); extendida en desarrollo
+// para no interrumpir sesiones largas de prueba manual.
+const SESSION_MAX_AGE_SECONDS = process.env.NODE_ENV === "production" ? 60 * 60 * 2 : 60 * 60 * 24 * 30;
+const SESSION_JWT_EXPIRATION = process.env.NODE_ENV === "production" ? "2h" : "30d";
+
 export async function crearSesion(payload: SessionPayload) {
   const token = await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("2h")
+    .setExpirationTime(SESSION_JWT_EXPIRATION)
     .sign(SECRET);
 
   cookies().set(SESSION_COOKIE, token, {
@@ -26,7 +31,7 @@ export async function crearSesion(payload: SessionPayload) {
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 2,
+    maxAge: SESSION_MAX_AGE_SECONDS,
   });
 }
 

@@ -8,6 +8,8 @@ const CATEGORIAS = [
   "Televisores",
   "Ventiladores",
   "Muebles",
+  "Audio",
+  "Hogar y decoración",
 ];
 
 export function StoreHeader({ categoriaActiva }: { categoriaActiva?: string }) {

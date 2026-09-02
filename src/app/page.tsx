@@ -4,6 +4,7 @@ import { productoPublico } from "@/lib/productos";
 import { StoreHeader } from "@/components/StoreHeader";
 import { ProductCard } from "@/components/ProductCard";
 import { PromoSlider } from "@/components/PromoSlider";
+import { Footer } from "@/components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -13,9 +14,9 @@ export default async function HomePage() {
   );
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <StoreHeader />
-      <main className="mx-auto max-w-7xl px-4 py-6 flex flex-col gap-8">
+      <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-6 flex flex-col gap-8">
         <PromoSlider />
 
         <section>
@@ -30,6 +31,7 @@ export default async function HomePage() {
           </div>
         </section>
       </main>
-    </>
+      <Footer />
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { productoPublico } from "@/lib/productos";
 import { StoreHeader } from "@/components/StoreHeader";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { Footer } from "@/components/Footer";
 import { SimuladorYPlan } from "./SimuladorYPlan";
 
 export const dynamic = "force-dynamic";
@@ -13,9 +14,9 @@ export default async function ProductoPage({ params }: { params: { id: string } 
   const p = productoPublico(producto);
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <StoreHeader categoriaActiva={p.categoria} />
-      <main className="mx-auto max-w-7xl px-4 py-6 grid md:grid-cols-2 gap-8">
+      <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-6 grid md:grid-cols-2 gap-8">
         <div className="rounded-xl aspect-square overflow-hidden">
           <PlaceholderImage />
         </div>
@@ -32,6 +33,7 @@ export default async function ProductoPage({ params }: { params: { id: string } 
           <SimuladorYPlan productoId={p.id} precio={p.precio} opciones={p.opcionesPlan} disponible={p.disponible} />
         </div>
       </main>
-    </>
+      <Footer />
+    </div>
   );
 }

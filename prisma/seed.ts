@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   await prisma.producto.createMany({
     data: [
+      // Ventiladores
       {
         nombre: "Ventilador de pie 3 velocidades",
         descripcion: "Ventilador de pie oscilante, 3 velocidades, ideal para el hogar.",
@@ -29,6 +30,19 @@ async function main() {
         condiciones: "Stock ilimitado.",
       },
       {
+        nombre: "Ventilador de torre",
+        descripcion: "Ventilador de torre bajo consumo, temporizador programable.",
+        precio: 250000,
+        categoria: "Ventiladores",
+        fotos: JSON.stringify([]),
+        stockLimitado: true,
+        cantidadDisponible: 6,
+        opcionesPlan: JSON.stringify([3, 6]),
+        condiciones: "Reserva exclusiva mientras el plan esté activo.",
+      },
+
+      // Celulares
+      {
         nombre: "Celular Galaxy A15",
         descripcion: "Smartphone gama media, 128GB, doble SIM.",
         precio: 850000,
@@ -50,6 +64,30 @@ async function main() {
         opcionesPlan: JSON.stringify([10, 12, 18]),
         condiciones: "Reserva exclusiva mientras el plan esté activo.",
       },
+      {
+        nombre: "Xiaomi Redmi Note 13",
+        descripcion: "128GB, cámara 108MP, carga rápida 33W.",
+        precio: 780000,
+        categoria: "Celulares",
+        fotos: JSON.stringify([]),
+        stockLimitado: false,
+        cantidadDisponible: null,
+        opcionesPlan: JSON.stringify([6, 10]),
+        condiciones: "Stock ilimitado.",
+      },
+      {
+        nombre: "Motorola Edge 40",
+        descripcion: "256GB, pantalla OLED 144Hz, resistente al agua.",
+        precio: 1350000,
+        categoria: "Celulares",
+        fotos: JSON.stringify([]),
+        stockLimitado: true,
+        cantidadDisponible: 4,
+        opcionesPlan: JSON.stringify([10, 12]),
+        condiciones: "Reserva exclusiva mientras el plan esté activo.",
+      },
+
+      // Computadores
       {
         nombre: "Portátil básico 14''",
         descripcion: "Portátil para trabajo y estudio, 8GB RAM, 256GB SSD.",
@@ -73,6 +111,30 @@ async function main() {
         condiciones: "Reserva exclusiva mientras el plan esté activo.",
       },
       {
+        nombre: "Portátil ultradelgado 15''",
+        descripcion: "16GB RAM, 512GB SSD, ideal para diseño y multitarea.",
+        precio: 2400000,
+        categoria: "Computadores",
+        fotos: JSON.stringify([]),
+        stockLimitado: true,
+        cantidadDisponible: 3,
+        opcionesPlan: JSON.stringify([12, 18]),
+        condiciones: "Reserva exclusiva mientras el plan esté activo.",
+      },
+      {
+        nombre: "Tablet 10'' con teclado",
+        descripcion: "128GB, incluye teclado desmontable y stylus.",
+        precio: 950000,
+        categoria: "Computadores",
+        fotos: JSON.stringify([]),
+        stockLimitado: false,
+        cantidadDisponible: null,
+        opcionesPlan: JSON.stringify([6, 10]),
+        condiciones: "Stock ilimitado.",
+      },
+
+      // Televisores
+      {
         nombre: "Televisor 50'' 4K",
         descripcion: "Smart TV 50 pulgadas, resolución 4K, HDR.",
         precio: 1500000,
@@ -94,6 +156,19 @@ async function main() {
         opcionesPlan: JSON.stringify([3, 6]),
         condiciones: "Stock ilimitado.",
       },
+      {
+        nombre: "Televisor 65'' 4K Smart",
+        descripcion: "65 pulgadas, Android TV integrado, sonido Dolby.",
+        precio: 2600000,
+        categoria: "Televisores",
+        fotos: JSON.stringify([]),
+        stockLimitado: true,
+        cantidadDisponible: 2,
+        opcionesPlan: JSON.stringify([12, 18]),
+        condiciones: "Reserva exclusiva mientras el plan esté activo.",
+      },
+
+      // Electrodomésticos
       {
         nombre: "Nevera 300L",
         descripcion: "Nevera No Frost 300 litros, bajo consumo.",
@@ -117,6 +192,30 @@ async function main() {
         condiciones: "Stock ilimitado.",
       },
       {
+        nombre: "Estufa a gas 4 puestos",
+        descripcion: "Estufa a gas con horno, encendido automático.",
+        precio: 980000,
+        categoria: "Electrodomésticos",
+        fotos: JSON.stringify([]),
+        stockLimitado: true,
+        cantidadDisponible: 3,
+        opcionesPlan: JSON.stringify([6, 10]),
+        condiciones: "Reserva exclusiva mientras el plan esté activo.",
+      },
+      {
+        nombre: "Microondas 20L",
+        descripcion: "Microondas digital 20 litros, 10 niveles de potencia.",
+        precio: 320000,
+        categoria: "Electrodomésticos",
+        fotos: JSON.stringify([]),
+        stockLimitado: false,
+        cantidadDisponible: null,
+        opcionesPlan: JSON.stringify([3, 6]),
+        condiciones: "Stock ilimitado.",
+      },
+
+      // Muebles
+      {
         nombre: "Juego de sala 3 puestos",
         descripcion: "Sofá de 3 puestos, tapizado en lino, patas de madera.",
         precio: 1600000,
@@ -138,6 +237,87 @@ async function main() {
         opcionesPlan: JSON.stringify([6, 12]),
         condiciones: "Stock ilimitado.",
       },
+      {
+        nombre: "Cama doble con cabecero",
+        descripcion: "Base cama doble + cabecero tapizado, incluye colchón.",
+        precio: 1250000,
+        categoria: "Muebles",
+        fotos: JSON.stringify([]),
+        stockLimitado: true,
+        cantidadDisponible: 4,
+        opcionesPlan: JSON.stringify([6, 12, 18]),
+        condiciones: "Reserva exclusiva mientras el plan esté activo.",
+      },
+
+      // Audio
+      {
+        nombre: "Barra de sonido 2.1",
+        descripcion: "Barra de sonido con subwoofer inalámbrico, Bluetooth.",
+        precio: 480000,
+        categoria: "Audio",
+        fotos: JSON.stringify([]),
+        stockLimitado: false,
+        cantidadDisponible: null,
+        opcionesPlan: JSON.stringify([3, 6]),
+        condiciones: "Stock ilimitado.",
+      },
+      {
+        nombre: "Audífonos inalámbricos con cancelación de ruido",
+        descripcion: "Bluetooth 5.3, hasta 30 horas de batería.",
+        precio: 350000,
+        categoria: "Audio",
+        fotos: JSON.stringify([]),
+        stockLimitado: true,
+        cantidadDisponible: 8,
+        opcionesPlan: JSON.stringify([3, 6]),
+        condiciones: "Reserva exclusiva mientras el plan esté activo.",
+      },
+      {
+        nombre: "Parlante Bluetooth portátil",
+        descripcion: "Resistente al agua, 12 horas de autonomía.",
+        precio: 220000,
+        categoria: "Audio",
+        fotos: JSON.stringify([]),
+        stockLimitado: false,
+        cantidadDisponible: null,
+        opcionesPlan: JSON.stringify([3, 6]),
+        condiciones: "Stock ilimitado.",
+      },
+
+      // Hogar y decoración
+      {
+        nombre: "Set de ollas 10 piezas",
+        descripcion: "Set de ollas antiadherentes, aptas para todo tipo de estufa.",
+        precio: 380000,
+        categoria: "Hogar y decoración",
+        fotos: JSON.stringify([]),
+        stockLimitado: false,
+        cantidadDisponible: null,
+        opcionesPlan: JSON.stringify([3, 6]),
+        condiciones: "Stock ilimitado.",
+      },
+      {
+        nombre: "Aspiradora robot",
+        descripcion: "Aspiradora robot con mapeo inteligente y control por app.",
+        precio: 890000,
+        categoria: "Hogar y decoración",
+        fotos: JSON.stringify([]),
+        stockLimitado: true,
+        cantidadDisponible: 5,
+        opcionesPlan: JSON.stringify([6, 10]),
+        condiciones: "Reserva exclusiva mientras el plan esté activo.",
+      },
+      {
+        nombre: "Ventilador humidificador de aire",
+        descripcion: "Humidificador con luz LED y control remoto.",
+        precio: 260000,
+        categoria: "Hogar y decoración",
+        fotos: JSON.stringify([]),
+        stockLimitado: false,
+        cantidadDisponible: null,
+        opcionesPlan: JSON.stringify([3, 6]),
+        condiciones: "Stock ilimitado.",
+      },
     ],
   });
 
@@ -148,7 +328,7 @@ async function main() {
     create: { usuario: "admin", passwordHash, rol: "administrador" },
   });
 
-  console.log("Seed completo: 12 productos, 1 administrador (admin / Admin1234).");
+  console.log("Seed completo: 27 productos en 8 categorías, 1 administrador (admin / Admin1234).");
 }
 
 main()

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { productoPublico } from "@/lib/productos";
 import { StoreHeader } from "@/components/StoreHeader";
 import { ProductCard } from "@/components/ProductCard";
+import { Footer } from "@/components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +20,9 @@ export default async function CatalogoPage({
   ).map(productoPublico);
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <StoreHeader categoriaActiva={categoria} />
-      <main className="mx-auto max-w-7xl px-4 py-6">
+      <main className="flex-1 mx-auto w-full max-w-7xl px-4 py-6">
         <h1 className="text-xl font-semibold mb-4">{categoria ?? "Todos los productos"}</h1>
         {productos.length === 0 ? (
           <p className="text-gray-500">No hay productos en esta categoría todavía.</p>
@@ -33,6 +34,7 @@ export default async function CatalogoPage({
           </div>
         )}
       </main>
-    </>
+      <Footer />
+    </div>
   );
 }

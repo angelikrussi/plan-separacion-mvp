@@ -21,7 +21,7 @@ export function ProductCard({ producto: p }: { producto: ProductoPublico }) {
       <div className="p-3 flex flex-col gap-1">
         <span className="text-xs text-gray-400">{p.categoria}</span>
         <span className="text-sm font-medium leading-snug line-clamp-2">{p.nombre}</span>
-        <span className="text-brand-dark font-bold">${p.precio.toLocaleString("es-CO")}</span>
+        <span className="text-ink font-bold">${p.precio.toLocaleString("es-CO")}</span>
         {!p.disponible && <span className="text-xs text-danger">No disponible</span>}
       </div>
     </Link>

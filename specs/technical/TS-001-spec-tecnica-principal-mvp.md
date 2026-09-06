@@ -280,6 +280,8 @@ No aplica edición vía API pública repetible en el MVP (sin webhooks externos)
 
 Nombre comercial: **LuckyHouse**. Paleta definida con el usuario (2026-08-30): primary `#0F5843`, cta `#16865F`/`#0F6D4D` hover, accent `#A8D76E` (solo badges, nunca botones), success `#208A5A`, warning `#D99A22`, danger `#C94343`, info `#3478A8`. Tokens declarados en `tailwind.config.ts`.
 
+Ajuste UX (2026-09-06): el storefront original solo usaba tonos de verde (header, slider promocional rotando 3 verdes casi idénticos, precios) y se leía plano/monótono. Se agregó `gold` (`#A67C3D`/dark `#7C5A26`/light `#F3E6C9`, dorado/bronce envejecido) como segundo hue real — acento cálido usado en el slide "Celulares" del `PromoSlider` y disponible para badges/acentos. Se probó primero un terracota (`#C97C4B`) pero se descartó por quedar casi complementario al verde y verse en tensión; el dorado es armónico (triádico) con el verde profundo, combinación clásica esmeralda+oro. El slider ahora alterna verde (marca) → dorado → `ink` oscuro en vez de tres verdes. Los precios (`ProductCard`, `producto/[id]`) pasaron de `brand-dark` a `ink` para que el verde quede reservado a elementos accionables (CTA).
+
 ## Error Handling
 
 ```text

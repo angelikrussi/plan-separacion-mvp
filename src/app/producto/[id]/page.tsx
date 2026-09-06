@@ -27,7 +27,7 @@ export default async function ProductoPage({ params }: { params: { id: string } 
             <h1 className="text-2xl font-bold">{p.nombre}</h1>
           </div>
           <p className="text-gray-700">{p.descripcion}</p>
-          <p className="text-3xl font-bold text-brand-dark">${p.precio.toLocaleString("es-CO")}</p>
+          <p className="text-3xl font-bold text-ink">${p.precio.toLocaleString("es-CO")}</p>
           <p className="text-sm text-gray-500">{p.condiciones}</p>
 
           <SimuladorYPlan productoId={p.id} precio={p.precio} opciones={p.opcionesPlan} disponible={p.disponible} />

@@ -24,7 +24,7 @@ Implementación real (CODE) vive en `src/`, `prisma/`, `tests/` — fuera de `/s
 | 1. Funcional (`FS-001` v1.1) | ✅ Hecha — E01 a E10 (incluye panel gerencial) |
 | 2. Técnica (`TS-001` v1.1 + 8 ADRs) | ✅ Hecha — documenta lo realmente implementado |
 | 3. Tasks (`TASK-001..033`) | ✅ Hechas y verificadas end-to-end |
-| 4. Implementación | ✅ MVP funcional corriendo en local (`npm run dev`) |
+| 4. Implementación | ✅ MVP funcional corriendo en local (`npm run dev`) y desplegado en Vercel (https://luckyhouse-zeta.vercel.app) |
 
 ## Alcance implementado más allá del MVP original
 
@@ -32,7 +32,9 @@ Durante la revisión con el usuario se agregó una épica completa (E10 — pane
 
 ## Pendiente antes de producción
 
-- Revertir `SKIP_2FA` (ADR-005) — confirmar que la variable no exista fuera de desarrollo.
+- ~~Revertir `SKIP_2FA` (ADR-005)~~ — hecho: la variable no se configuró en Vercel (Production/Preview/Development), solo existe en `.env` local.
+- **Comprobantes de pago se pierden en producción**: `UPLOAD_DIR` (`./storage/comprobantes`) escribe al filesystem local, que en Vercel es de solo lectura y efímero — el registro de un abono con comprobante probablemente falle o el archivo se pierda. Pendiente migrar a un storage real (Vercel Blob, S3, etc.) antes de usar el flujo de abonos en serio.
 - Resolver el vacío de política de mora antes de tratar la columna "Alerta" del reporte como regla de negocio real (FR-023).
 - Evaluar el salto a Next 16 / xlsx alternativo por los advisories de seguridad conocidos (ver TS-001, sección Risks).
 - Cambiar el número de WhatsApp placeholder por el real del negocio (TASK-025).
+- Separar base de datos de desarrollo/staging de la de producción (hoy comparten la misma Neon, ver ADR-004 update 2026-09-06).

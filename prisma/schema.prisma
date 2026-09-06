@@ -1,6 +1,7 @@
 // Ver specs/technical/TS-001-principal-mvp.md (Data Model) y ADR-004
-// (SQLite en dev / PostgreSQL en prod). Los campos de estado se
-// modelan como String porque SQLite no soporta enums nativos; los
+// (originalmente SQLite en dev / PostgreSQL en prod; migrado a Postgres
+// también en dev el 2026-09-06 al desplegar a Vercel — ver ADR-004).
+// Los campos de estado se modelan como String (heredado de SQLite); los
 // valores válidos se validan en la capa de aplicación (src/lib).
 
 generator client {
@@ -8,8 +9,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Cliente {

@@ -44,7 +44,7 @@ Application layer (use cases)
 Prisma ORM
       │
       ▼
-Base de datos relacional (SQLite en dev, PostgreSQL en prod — ADR-004)
+Base de datos relacional (PostgreSQL/Neon, dev y prod comparten instancia — ADR-004)
       │
       └─ Storage de comprobantes (adapter: filesystem)
 ```
@@ -271,7 +271,7 @@ No aplica edición vía API pública repetible en el MVP (sin webhooks externos)
 
 ## External Integrations
 
-- Storage de comprobantes: adapter con implementación filesystem local en dev.
+- Storage de comprobantes: adapter con implementación filesystem local — mismo adapter en prod (Vercel), donde no persiste por ser filesystem efímero/read-only; ver Risks.
 - Notificaciones: adapter de log en MVP (interfaz lista para email transaccional).
 - Imágenes de producto: `PlaceholderImage` (SVG inline, sin red externa) mientras `Producto.fotos` está vacío — reemplaza un intento inicial con `picsum.photos` descartado por no ser confiable sin conexión estable (ADR-007).
 - WhatsApp: botón flotante estático (`wa.me/<numero>?text=...`), sin backend ni automatización — ver Non-Goal en FS-001.
@@ -339,10 +339,11 @@ Integration: flujo completo registro → plan → abono → aprobación → libe
 
 ## Rollout
 
-Un solo entorno (dev local) para el MVP de esta iteración; sin estrategia de despliegue progresivo todavía.
+Dev local (`npm run dev`) y producción en Vercel (https://luckyhouse-zeta.vercel.app, desplegado por CLI 2026-09-06, sin conexión a GitHub — el repo pertenece a otra cuenta) comparten la misma base Postgres/Neon; sin estrategia de despliegue progresivo ni entorno de staging separado todavía.
 
 ## Risks
-- SQLite en dev vs PostgreSQL en prod puede ocultar diferencias de tipos/constraints (mitigado en ADR-004).
+- Dev y prod comparten la misma base de datos Neon (ver ADR-004 update) — sin aislamiento todavía; datos de prueba y reales conviven.
+- Comprobantes de pago (`UPLOAD_DIR`, storage filesystem) no persisten en el filesystem efímero/read-only de Vercel — el flujo de abonar con comprobante probablemente falle en producción hasta migrar a un storage real (Blob/S3).
 - Sin 2FA de admin: el rol con mayor impacto financiero queda con un solo factor (Non-Goal aceptado explícitamente en FS-001).
 - `next@14.2.x` tiene advisories sin parche dentro de la línea 14 (requieren saltar a Next 16, cambio mayor no aplicado en este MVP); riesgo aceptado para un entorno de solo desarrollo local.
 - `xlsx@0.18.5` tiene advisories conocidos sin parche disponible en npm; exposición acotada a un endpoint admin-only.

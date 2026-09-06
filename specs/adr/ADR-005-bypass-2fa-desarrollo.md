@@ -14,4 +14,7 @@ Permitir avanzar en la revisión funcional del resto del sistema sin bloquear to
 
 ## Consequences
 Positive: desbloqueó la revisión de todas las vistas sin fricción.
-Negative: si `SKIP_2FA` quedara activo en un entorno real, anularía completamente el segundo factor. Mitigación: la variable no tiene valor por defecto (ausente = 2FA activo), y `codigoDev` nunca se envía en `NODE_ENV=production`. Acción pendiente antes de cualquier despliegue: confirmar que `SKIP_2FA` no esté definido y considerar eliminar el bloque de código si ya no se necesita.
+Negative: si `SKIP_2FA` quedara activo en un entorno real, anularía completamente el segundo factor. Mitigación: la variable no tiene valor por defecto (ausente = 2FA activo), y `codigoDev` nunca se envía en `NODE_ENV=production`.
+
+## Update (2026-09-06) — Confirmado en el deploy a Vercel
+Al desplegar a producción (ver ADR-004 update) se confirmó que `SKIP_2FA` no está definido en ninguna variable de entorno de Vercel (Production/Preview/Development) — solo existe en `.env` local. Sigue pendiente, sin urgencia, eliminar el bloque de código si en algún momento se decide que ya no hace falta para revisión manual.

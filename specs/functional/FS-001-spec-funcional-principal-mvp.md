@@ -304,4 +304,4 @@ Then el archivo Excel contiene una fila por plan con las columnas definidas en F
 
 Ver `Principal_Documento_Tecnico.md` (raíz), sección 9 — 13 vacíos identificados. Los que requieren decisión técnica quedan resueltos en `TS-001` (ver sección "Decisiones derivadas de vacíos funcionales").
 
-Adicional: durante la implementación se activó temporalmente un bypass de 2FA (`SKIP_2FA`) y un autocompletado del código TOTP en desarrollo, para agilizar la revisión del resto de las vistas por parte del usuario. Esto es una **desviación temporal de BR-010**, documentada en ADR-005, y debe revertirse antes de cualquier despliegue real.
+Adicional: durante la implementación se activó temporalmente un bypass de 2FA (`SKIP_2FA`) y un autocompletado del código TOTP en desarrollo, para agilizar la revisión del resto de las vistas por parte del usuario. Esto es una **desviación temporal de BR-010**, documentada en ADR-005, atada a una variable de entorno que solo existe en `.env` local — confirmado ausente en el deploy a Vercel (2026-09-06, ver ADR-005 update).

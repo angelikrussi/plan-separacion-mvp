@@ -9,6 +9,7 @@ type Slide = {
   cta: string;
   href: string;
   bg: string;
+  ctaText: string;
 };
 
 const SLIDES: Slide[] = [
@@ -18,20 +19,23 @@ const SLIDES: Slide[] = [
     cta: "Ver catálogo",
     href: "/catalogo",
     bg: "bg-brand",
+    ctaText: "text-brand-dark",
   },
   {
     titulo: "Celulares desde 6 cuotas",
     texto: "Separa el celular que quieres sin pagarlo de una sola vez.",
     cta: "Ver celulares",
     href: "/catalogo?categoria=Celulares",
-    bg: "bg-cta",
+    bg: "bg-gold",
+    ctaText: "text-gold-dark",
   },
   {
     titulo: "Renueva tu sala o comedor",
     texto: "Muebles con plan separe a tu medida, hasta 18 cuotas.",
     cta: "Ver muebles",
     href: "/catalogo?categoria=Muebles",
-    bg: "bg-secondary",
+    bg: "bg-ink",
+    ctaText: "text-ink",
   },
 ];
 
@@ -50,7 +54,7 @@ export function PromoSlider() {
       <div className={`${slide.bg} text-white px-6 py-12 sm:py-16 flex flex-col gap-3 transition-colors`}>
         <h1 className="text-2xl sm:text-3xl font-bold max-w-xl">{slide.titulo}</h1>
         <p className="text-white/90 max-w-xl">{slide.texto}</p>
-        <Link href={slide.href} className="mt-2 self-start rounded-lg bg-white text-brand-dark px-5 py-3 font-semibold">
+        <Link href={slide.href} className={`mt-2 self-start rounded-lg bg-white px-5 py-3 font-semibold ${slide.ctaText}`}>
           {slide.cta}
         </Link>
       </div>

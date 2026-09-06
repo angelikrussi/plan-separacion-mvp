@@ -14,6 +14,11 @@ const config: Config = {
         },
         secondary: "#2F8067",
         accent: "#A8D76E", // solo para badges/acentos, nunca botones (ver guía del usuario)
+        gold: {
+          DEFAULT: "#A67C3D", // Acento cálido — dorado/bronce envejecido, armónico con el verde (esmeralda+oro), ajuste UX 2026-09-06
+          dark: "#7C5A26",
+          light: "#F3E6C9",
+        },
         cta: {
           DEFAULT: "#16865F",
           hover: "#0F6D4D",
